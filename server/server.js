@@ -21,11 +21,14 @@ app.get('/api/health', (req, res) => {
   res.status(200).json({ status: 'healthy', timestamp: new Date() });
 });
 
-// Basic Route for test verification of email validation
 import { validateEmail } from './middleware/emailValidator.js';
+import matchingRoutes from './routes/matching.js';
+
 app.post('/api/auth/verify-email', validateEmail, (req, res) => {
   res.status(200).json({ message: 'Institutional email successfully validated.' });
 });
+
+app.use('/api/matching', matchingRoutes);
 
 const PORT = process.env.PORT || 5001;
 server.listen(PORT, () => {
