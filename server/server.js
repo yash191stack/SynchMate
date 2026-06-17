@@ -7,6 +7,7 @@ import { connectRedis } from './services/cacheService.js';
 import { initializeSocket } from './services/socketService.js';
 import { validateEmail } from './middleware/emailValidator.js';
 import matchingRoutes from './routes/matching.js';
+import authRoutes from './routes/auth.js';
 
 dotenv.config();
 
@@ -29,12 +30,8 @@ app.get('/api/health', (req, res) => {
   res.status(200).json({ status: 'healthy', timestamp: new Date() });
 });
 
-// Basic Route for test verification of email validation
-app.post('/api/auth/verify-email', validateEmail, (req, res) => {
-  res.status(200).json({ message: 'Institutional email successfully validated.' });
-});
-
 // Mount Routes
+app.use('/api/auth', authRoutes);
 app.use('/api/matching', matchingRoutes);
 
 const PORT = process.env.PORT || 5001;
