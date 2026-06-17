@@ -1,6 +1,7 @@
 import express from 'express';
 import User from '../models/User.js';
 import Swipe from '../models/Swipe.js';
+import Message from '../models/Message.js';
 import { calculateCosineSimilarity, getPreferenceVector } from '../services/matchingEngine.js';
 import { hasDealbreakerConflict } from '../middleware/dealbreakerEvaluator.js';
 import { getSwipedUsers, trackSwipe } from '../services/cacheService.js';
@@ -150,6 +151,37 @@ router.post('/swipe', async (req, res) => {
   } catch (error) {
     console.error('Swipe tracking failed:', error);
     return res.status(500).json({ error: 'Internal server error logging swipe.' });
+  }
+});
+
+// Retrieve message logs between two matched users
+router.get('/chat/:userId/:partnerId', async (req, res) => {
+  try {
+    const { userId, partnerId } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(userId) || !mongoose.Types.ObjectId.isValid(partnerId)) {
+      return res.status(400).json({ error: 'Invalid user or partner ID format.' });
+    }
+
+    const messages = await Message.find({
+      $or: [
+        { sender: userId, recipient: partnerId },
+        { sender: partnerId, recipient: userId }
+      ]
+    }).sort({ createdAt: 1 });
+
+    const formattedMessages = messages.map(msg => ({
+      _id: msg._id,
+      senderId: msg.sender,
+      recipientId: msg.recipient,
+      text: msg.text,
+      timestamp: msg.createdAt
+    }));
+
+    return res.status(200).json(formattedMessages);
+  } catch (error) {
+    console.error('Chat history retrieval failed:', error);
+    return res.status(500).json({ error: 'Internal server error retrieving chat logs.' });
   }
 });
 

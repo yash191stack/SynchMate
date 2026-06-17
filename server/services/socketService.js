@@ -1,4 +1,5 @@
 import { Server } from 'socket.io';
+import Message from '../models/Message.js';
 
 let io = null;
 const activeConnections = new Map(); // Maps userId -> socketId
@@ -16,6 +17,42 @@ export const initializeSocket = (server) => {
       if (userId) {
         activeConnections.set(userId.toString(), socket.id);
         console.log(`User identified: ${userId} -> Socket: ${socket.id}`);
+      }
+    });
+
+    // Real-time message exchange and db persistence
+    socket.on('send_message', async (data) => {
+      try {
+        const { senderId, recipientId, text } = data;
+        
+        if (!senderId || !recipientId || !text) return;
+
+        // Persist message record in DB
+        const savedMessage = await Message.create({
+          sender: senderId,
+          recipient: recipientId,
+          text: text
+        });
+
+        // Pack message for socket dispatch
+        const packedMsg = {
+          _id: savedMessage._id,
+          senderId,
+          recipientId,
+          text,
+          timestamp: savedMessage.createdAt
+        };
+
+        // Emit message back to sender (acknowledgement)
+        socket.emit('receive_message', packedMsg);
+
+        // Deliver to recipient socket if online
+        const recipientSocketId = activeConnections.get(recipientId.toString());
+        if (recipientSocketId) {
+          io.to(recipientSocketId).emit('receive_message', packedMsg);
+        }
+      } catch (err) {
+        console.error('Socket send_message handler failed:', err);
       }
     });
 

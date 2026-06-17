@@ -212,6 +212,19 @@ function App() {
     setTypedMessage('');
   };
 
+  const handleSelectChat = async (match) => {
+    setActiveChat(match);
+    try {
+      const response = await axios.get(`${API_BASE}/matching/chat/${currentUser._id}/${match._id}`);
+      setChatMessages(prev => ({
+        ...prev,
+        [match._id]: response.data
+      }));
+    } catch (err) {
+      console.warn('Backend chat history is offline. Operating in sandbox memory session.');
+    }
+  };
+
   const handleEmailVerification = async (e) => {
     e.preventDefault();
     setVerificationError('');
@@ -350,7 +363,7 @@ function App() {
                 {matches.map((match) => (
                   <button
                     key={match._id}
-                    onClick={() => setActiveChat(match)}
+                    onClick={() => handleSelectChat(match)}
                     className={`w-full flex items-center justify-between p-3 rounded-lg border-2 text-left transition-all ${
                       activeChat && activeChat._id === match._id
                         ? 'bg-cyber-purple/20 border-cyber-purple shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
@@ -529,7 +542,7 @@ function App() {
             <div className="flex flex-col space-y-3">
               <button
                 onClick={() => {
-                  setActiveChat(newMatchModal);
+                  handleSelectChat(newMatchModal);
                   setNewMatchModal(null);
                 }}
                 className="w-full bg-cyber-purple text-black font-extrabold py-3 rounded-lg border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] text-xs uppercase"
