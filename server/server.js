@@ -3,14 +3,22 @@ import http from 'http';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { connectDB } from './config/db.js';
+import { connectRedis } from './services/cacheService.js';
+import { initializeSocket } from './services/socketService.js';
+import { validateEmail } from './middleware/emailValidator.js';
+import matchingRoutes from './routes/matching.js';
 
 dotenv.config();
 
 const app = express();
 const server = http.createServer(app);
 
-// Initialize DB Connection
+// Initialize DB and Cache Connections
 connectDB();
+connectRedis();
+
+// Initialize WebSocket Gateway
+initializeSocket(server);
 
 // Middlewares
 app.use(cors());
@@ -21,13 +29,12 @@ app.get('/api/health', (req, res) => {
   res.status(200).json({ status: 'healthy', timestamp: new Date() });
 });
 
-import { validateEmail } from './middleware/emailValidator.js';
-import matchingRoutes from './routes/matching.js';
-
+// Basic Route for test verification of email validation
 app.post('/api/auth/verify-email', validateEmail, (req, res) => {
   res.status(200).json({ message: 'Institutional email successfully validated.' });
 });
 
+// Mount Routes
 app.use('/api/matching', matchingRoutes);
 
 const PORT = process.env.PORT || 5001;
