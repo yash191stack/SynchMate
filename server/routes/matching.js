@@ -6,6 +6,7 @@ import { calculateCosineSimilarity, getPreferenceVector } from '../services/matc
 import { hasDealbreakerConflict } from '../middleware/dealbreakerEvaluator.js';
 import { getSwipedUsers, trackSwipe } from '../services/cacheService.js';
 import { notifyMatch } from '../services/socketService.js';
+import { protect } from '../middleware/auth.js';
 import mongoose from 'mongoose';
 
 const router = express.Router();
@@ -37,15 +38,11 @@ router.post('/compatibility', (req, res) => {
   });
 });
 
-// Discover matches within campus radius, optimized using geospatial indexing and Redis exclusions
-router.get('/discover/:userId', async (req, res) => {
+// Discover matches within campus radius, optimized using geospatial indexing and Redis exclusions (secured by JWT token)
+router.get('/discover', protect, async (req, res) => {
   try {
-    const { userId } = req.params;
+    const userId = req.userId;
     const { maxDistance = 50000 } = req.query; // default 50km
-
-    if (!mongoose.Types.ObjectId.isValid(userId)) {
-      return res.status(400).json({ error: 'Invalid user ID format.' });
-    }
 
     const currentUser = await User.findById(userId);
     if (!currentUser) {
@@ -75,26 +72,15 @@ router.get('/discover/:userId', async (req, res) => {
           maxDistance: Number(maxDistance),
           spherical: true,
           query: {
-            _id: { $nin: excludeObjectIds }
+            _id: { $nin: excludeObjectIds },
+            isProfileComplete: true // Only match complete profiles!
           }
         }
       }
     ]);
 
     // Apply dealbreakers and compute scores for matching candidates
-    const scoredMatches = candidates
-      .filter(candidate => !hasDealbreakerConflict(currentUser, candidate))
-      .map(candidate => {
-        const vectorA = getPreferenceVector(currentUser);
-        const vectorB = getPreferenceVector(candidate);
-        const score = calculateCosineSimilarity(vectorA, vectorB);
-        return {
-          ...candidate,
-          compatibilityScore: Math.round(score * 100)
-        };
-      })
-      // Sort candidates by compatibility score descending
-      .sort((a, b) => b.compatibilityScore - a.compatibilityScore);
+    const scoredMatches = scoredMatchesFilter(currentUser, candidates);
 
     return res.status(200).json(scoredMatches);
   } catch (error) {
@@ -103,13 +89,30 @@ router.get('/discover/:userId', async (req, res) => {
   }
 });
 
-// Track swipe action, sync to Redis, and evaluate double-blind opt-in match status
-router.post('/swipe', async (req, res) => {
-  try {
-    const { userId, candidateId, direction } = req.body;
+// Helper function to calculate matching telemetry
+const scoredMatchesFilter = (currentUser, candidates) => {
+  return candidates
+    .filter(candidate => !hasDealbreakerConflict(currentUser, candidate))
+    .map(candidate => {
+      const vectorA = getPreferenceVector(currentUser);
+      const vectorB = getPreferenceVector(candidate);
+      const score = calculateCosineSimilarity(vectorA, vectorB);
+      return {
+        ...candidate,
+        compatibilityScore: Math.round(score * 100)
+      };
+    })
+    .sort((a, b) => b.compatibilityScore - a.compatibilityScore);
+};
 
-    if (!userId || !candidateId || !direction) {
-      return res.status(400).json({ error: 'userId, candidateId, and direction (left/right) are required.' });
+// Track swipe action, sync to Redis, and evaluate double-blind opt-in match status (secured by JWT token)
+router.post('/swipe', protect, async (req, res) => {
+  try {
+    const userId = req.userId;
+    const { candidateId, direction } = req.body;
+
+    if (!candidateId || !direction) {
+      return res.status(400).json({ error: 'candidateId and direction (left/right) are required.' });
     }
 
     // Save swipe event to MongoDB to support persistent relationship checks
@@ -154,13 +157,14 @@ router.post('/swipe', async (req, res) => {
   }
 });
 
-// Retrieve message logs between two matched users
-router.get('/chat/:userId/:partnerId', async (req, res) => {
+// Retrieve message logs between two matched users (secured by JWT token)
+router.get('/chat/:partnerId', protect, async (req, res) => {
   try {
-    const { userId, partnerId } = req.params;
+    const userId = req.userId;
+    const { partnerId } = req.params;
 
-    if (!mongoose.Types.ObjectId.isValid(userId) || !mongoose.Types.ObjectId.isValid(partnerId)) {
-      return res.status(400).json({ error: 'Invalid user or partner ID format.' });
+    if (!mongoose.Types.ObjectId.isValid(partnerId)) {
+      return res.status(400).json({ error: 'Invalid partner ID format.' });
     }
 
     const messages = await Message.find({

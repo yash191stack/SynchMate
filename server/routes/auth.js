@@ -102,4 +102,66 @@ router.get('/me', protect, async (req, res) => {
   }
 });
 
+// Onboard user preferences, habits, dealbreakers, and coordinates
+router.post('/onboard', protect, async (req, res) => {
+  try {
+    const { 
+      major, gender, age, bio, profileImage, 
+      preferences, dealbreakers, coordinates 
+    } = req.body;
+
+    if (!major || !gender || !age || !preferences || !dealbreakers || !coordinates) {
+      return res.status(400).json({ error: 'All onboarding configuration parameters are required.' });
+    }
+
+    const user = await User.findById(req.userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User profile not found.' });
+    }
+
+    user.major = major;
+    user.gender = gender;
+    user.age = age;
+    user.bio = bio || '';
+    user.profileImage = profileImage || '';
+
+    user.preferences = {
+      sleep: Number(preferences.sleep),
+      cleanliness: Number(preferences.cleanliness),
+      socialness: Number(preferences.socialness),
+      diet: Number(preferences.diet)
+    };
+
+    user.dealbreakers = {
+      budgetMin: Number(dealbreakers.budgetMin),
+      budgetMax: Number(dealbreakers.budgetMax),
+      smokingAllowed: Boolean(dealbreakers.smokingAllowed),
+      petsAllowed: Boolean(dealbreakers.petsAllowed)
+    };
+
+    user.location = {
+      type: 'Point',
+      coordinates: [Number(coordinates[0]), Number(coordinates[1])]
+    };
+
+    user.isProfileComplete = true;
+
+    await user.save();
+
+    return res.status(200).json({
+      message: 'Onboarding completed successfully.',
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        college: user.college,
+        isProfileComplete: user.isProfileComplete
+      }
+    });
+  } catch (error) {
+    console.error('Onboarding preference save failed:', error);
+    return res.status(500).json({ error: 'Internal server error saving onboarding details.' });
+  }
+});
+
 export default router;
