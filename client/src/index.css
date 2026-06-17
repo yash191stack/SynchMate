@@ -1,0 +1,53 @@
+@import "tailwindcss";
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+@layer base {
+  body {
+    background-color: #0B0F17;
+    color: #F8FAFC;
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Space Grotesk', sans-serif;
+  }
+}
+
+/* Custom background aurora glows */
+.aurora-glow {
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  filter: blur(150px);
+  opacity: 0.15;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.aurora-purple {
+  background: radial-gradient(circle, #8B5CF6 0%, transparent 70%);
+  top: -100px;
+  left: -100px;
+}
+
+.aurora-pink {
+  background: radial-gradient(circle, #EC4899 0%, transparent 70%);
+  bottom: -100px;
+  right: -100px;
+}
+
+.aurora-mint {
+  background: radial-gradient(circle, #10B981 0%, transparent 70%);
+  top: 40%;
+  left: 30%;
+}
+
+/* Custom glass card style */
+.cyber-glass {
+  background: rgba(21, 28, 44, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
