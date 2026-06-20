@@ -1,8 +1,8 @@
 {
-  "name": "roommateiq-server",
+  "name": "synchmate-server",
   "version": "1.0.0",
   "type": "module",
-  "description": "RoommateIQ matching engine and websocket gateway",
+  "description": "SynchMate matching engine and websocket gateway",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

@@ -1,6 +1,6 @@
-# 🧠 RoommateIQ: Privacy-First College Roommate Matching Platform
+# 🧠 SynchMate: Privacy-First College Roommate Matching Platform
 
-RoommateIQ is a high-performance, privacy-focused roommate matching platform built specifically for university students. It eliminates random WhatsApp/Facebook search dependencies by utilizing multi-dimensional preference vector matching, hard-lock lifestyle dealbreaker gates, and double-blind opt-in swiping.
+SynchMate is a high-performance, privacy-focused roommate matching platform built specifically for university students. It eliminates random WhatsApp/Facebook search dependencies by utilizing multi-dimensional preference vector matching, hard-lock lifestyle dealbreaker gates, and double-blind opt-in swiping.
 
 ---
 

@@ -288,10 +288,6 @@ function App() {
       }, 1500);
     }
 
-    setChatMessages(prev => ({
-      ...prev,
-      [activeChat._id]: [...(prev[activeChat._id] || []), newMessage]
-    }));
     setTypedMessage('');
   };
 

@@ -29,7 +29,7 @@ const userD = {
   dealbreakers: { budgetMin: 3000, budgetMax: 4000, smokingAllowed: false, petsAllowed: true }
 };
 
-console.log('--- RoommateIQ Match Engine Telemetry Check ---');
+console.log('--- SynchMate Match Engine Telemetry Check ---');
 
 const runEvaluation = (profile1, profile2) => {
   console.log(`\nEvaluating compatibility: ${profile1.name} & ${profile2.name}`);
