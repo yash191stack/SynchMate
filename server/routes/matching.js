@@ -157,6 +157,49 @@ router.post('/swipe', protect, async (req, res) => {
   }
 });
 
+// Retrieve all mutual matches (where both users swiped 'right' on each other) (secured by JWT token)
+router.get('/matches', protect, async (req, res) => {
+  try {
+    const userId = req.userId;
+
+    // Find all users who swiped right on the current user
+    const swipesOnMe = await Swipe.find({ swipee: userId, direction: 'right' });
+    const usersWhoLikedMe = swipesOnMe.map(s => s.swiper);
+
+    if (usersWhoLikedMe.length === 0) {
+      return res.status(200).json([]);
+    }
+
+    // Find all users from that group who the current user also swiped right on
+    const mutualSwipes = await Swipe.find({
+      swiper: userId,
+      swipee: { $in: usersWhoLikedMe },
+      direction: 'right'
+    }).populate('swipee');
+
+    const currentUser = await User.findById(userId);
+    const vectorA = currentUser ? getPreferenceVector(currentUser) : null;
+
+    const matches = mutualSwipes.map(s => {
+      const matchUser = s.swipee.toObject ? s.swipee.toObject() : s.swipee;
+      let score = 0;
+      if (vectorA) {
+        const vectorB = getPreferenceVector(matchUser);
+        score = Math.round(calculateCosineSimilarity(vectorA, vectorB) * 100);
+      }
+      return {
+        ...matchUser,
+        compatibilityScore: score
+      };
+    });
+
+    return res.status(200).json(matches);
+  } catch (error) {
+    console.error('Failed to fetch mutual matches:', error);
+    return res.status(500).json({ error: 'Internal server error fetching mutual matches.' });
+  }
+});
+
 // Retrieve message logs between two matched users (secured by JWT token)
 router.get('/chat/:partnerId', protect, async (req, res) => {
   try {

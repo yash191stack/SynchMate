@@ -1,11 +1,11 @@
 @import "tailwindcss";
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
 @layer base {
   body {
-    background-color: #0B0F17;
-    color: #F8FAFC;
+    background-color: #F8FAFC;
+    color: #0F172A;
     font-family: 'Inter', sans-serif;
     overflow-x: hidden;
   }
@@ -15,39 +15,30 @@
   }
 }
 
-/* Custom background aurora glows */
-.aurora-glow {
+/* Custom background holomorphic glass blurs */
+.holo-glow {
   position: absolute;
-  width: 500px;
-  height: 500px;
   border-radius: 50%;
-  filter: blur(150px);
-  opacity: 0.15;
+  filter: blur(140px);
+  opacity: 0.25;
   pointer-events: none;
   z-index: 0;
 }
 
-.aurora-purple {
-  background: radial-gradient(circle, #8B5CF6 0%, transparent 70%);
-  top: -100px;
-  left: -100px;
+.holo-indigo {
+  background: radial-gradient(circle, #818CF8 0%, transparent 70%);
 }
 
-.aurora-pink {
-  background: radial-gradient(circle, #EC4899 0%, transparent 70%);
-  bottom: -100px;
-  right: -100px;
+.holo-cyan {
+  background: radial-gradient(circle, #22D3EE 0%, transparent 70%);
 }
 
-.aurora-mint {
-  background: radial-gradient(circle, #10B981 0%, transparent 70%);
-  top: 40%;
-  left: 30%;
+/* Premium holomorphic light glass card style */
+.holo-glass {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 10px 30px -10px rgba(99, 102, 241, 0.08);
 }
 
-/* Custom glass card style */
-.cyber-glass {
-  background: rgba(21, 28, 44, 0.7);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-}
