@@ -155,7 +155,7 @@ function App() {
       setUser(registeredUser);
       setAppScreen('onboard');
     } catch (err) {
-      setAuthError(err.response?.data?.error || 'Registration failed. Check academic email.');
+      setAuthError(err.response?.data?.error || 'Registration failed. Check your email address.');
     }
   };
 
@@ -450,13 +450,13 @@ function App() {
             {authTab === 'login' ? (
               <form onSubmit={handleLogin} className="space-y-4">
                 <div>
-                  <label className="block text-xs uppercase tracking-wider text-slate-500 font-bold mb-1.5">Collegiate Email</label>
+                  <label className="block text-xs uppercase tracking-wider text-slate-500 font-bold mb-1.5">Email Address</label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-3.5 w-4 h-4 text-slate-400" />
                     <input 
                       type="email"
                       required
-                      placeholder="username@gla.ac.in"
+                      placeholder="username@example.com"
                       value={authForm.email}
                       onChange={(e) => setAuthForm(prev => ({ ...prev, email: e.target.value }))}
                       className="w-full bg-slate-50/50 border border-slate-200 rounded-xl py-3 pl-10 pr-4 text-sm text-slate-800 focus:outline-none focus:border-indigo-600"
@@ -513,16 +513,16 @@ function App() {
                 </div>
 
                 <div>
-                  <label className="block text-xs uppercase tracking-wider text-slate-500 font-bold mb-1.5">Institutional Email</label>
+                  <label className="block text-xs uppercase tracking-wider text-slate-500 font-bold mb-1.5">Email Address</label>
                   <input 
                     type="email"
                     required
-                    placeholder="name@gla.ac.in"
+                    placeholder="name@example.com"
                     value={authForm.email}
                     onChange={(e) => setAuthForm(prev => ({ ...prev, email: e.target.value }))}
                     className="w-full bg-slate-50/50 border border-slate-200 rounded-xl py-3 px-4 text-sm text-slate-800 focus:outline-none focus:border-indigo-600"
                   />
-                  <span className="text-[10px] text-indigo-500 mt-1 block">Domain restricted: must end in .edu or .ac.in</span>
+                  <span className="text-[10px] text-indigo-500 mt-1 block">Enter your personal or collegiate email address.</span>
                 </div>
 
                 <div>

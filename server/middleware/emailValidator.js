@@ -1,5 +1,5 @@
-// Regex for institutional emails (e.g., user@collegedomain.edu or user@gla.ac.in)
-const INSTITUTIONAL_EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@([a-zA-Z0-9.-]+\.edu|[a-zA-Z0-9.-]+\.ac\.in)$/i;
+// Regex for standard email validation
+const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i;
 
 export const validateEmail = (req, res, next) => {
   const { email } = req.body;
@@ -8,9 +8,9 @@ export const validateEmail = (req, res, next) => {
     return res.status(400).json({ error: 'Email address is required.' });
   }
 
-  if (!INSTITUTIONAL_EMAIL_REGEX.test(email)) {
-    return res.status(403).json({
-      error: 'Access restricted. You must register using a verified college email domain (.edu or .ac.in).'
+  if (!EMAIL_REGEX.test(email)) {
+    return res.status(400).json({
+      error: 'Please provide a valid email address.'
     });
   }
 
