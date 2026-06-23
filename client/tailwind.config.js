@@ -7,20 +7,24 @@ export default {
   theme: {
     extend: {
       colors: {
-        cyber: {
-          bg: '#0B0F17',
-          card: '#151C2C',
-          purple: '#8B5CF6',
-          mint: '#10B981',
-          pink: '#EC4899',
-          border: '#0F172A',
+        housing: {
+          bg: '#F9F9F8',
+          card: '#FFFFFF',
+          border: '#E2E8F0',
+          text: '#111827',
+          subtext: '#64748B',
+          primary: '#0F172A',
+          accent: '#3B82F6',
+          success: '#10B981'
         }
       },
+      fontFamily: {
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+      },
       boxShadow: {
-        neobrutal: '5px 5px 0px 0px #000000',
-        neobrutalPink: '5px 5px 0px 0px #EC4899',
-        neobrutalMint: '5px 5px 0px 0px #10B981',
-        glow: '0 0 15px rgba(139, 92, 246, 0.4)',
+        minimal: '0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.03)',
+        subtle: '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)',
+        elevated: '0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025)',
       }
     },
   },

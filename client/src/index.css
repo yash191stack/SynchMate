@@ -1,44 +1,22 @@
 @import "tailwindcss";
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 @layer base {
   body {
-    background-color: #F8FAFC;
-    color: #0F172A;
-    font-family: 'Inter', sans-serif;
+    background-color: #F9F9F8;
+    color: #111827;
+    font-family: 'Inter', system-ui, sans-serif;
     overflow-x: hidden;
-  }
-
-  h1, h2, h3, h4, h5, h6 {
-    font-family: 'Space Grotesk', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 }
 
-/* Custom background holomorphic glass blurs */
-.holo-glow {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(140px);
-  opacity: 0.25;
-  pointer-events: none;
-  z-index: 0;
+/* Premium minimal card style */
+.minimal-card {
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+  border-radius: 12px;
 }
-
-.holo-indigo {
-  background: radial-gradient(circle, #818CF8 0%, transparent 70%);
-}
-
-.holo-cyan {
-  background: radial-gradient(circle, #22D3EE 0%, transparent 70%);
-}
-
-/* Premium holomorphic light glass card style */
-.holo-glass {
-  background: rgba(255, 255, 255, 0.75);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  box-shadow: 0 10px 30px -10px rgba(99, 102, 241, 0.08);
-}
-
